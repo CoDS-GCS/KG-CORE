@@ -1,0 +1,32 @@
+# configs/default.yaml — KG-CORE default hyperparameters
+#
+# These values match the CLI defaults in kg_core/args.py.
+# Override individual fields here for batch runs; use --flag overrides
+# for quick one-off experiments.
+
+# ── Graph traversal ──────────────────────────────────────────────────────────
+multi_hop: true
+hops: 1
+direction: both             # outgoing | incoming | both
+
+# ── Oracle & sampling ────────────────────────────────────────────────────────
+use_LLM: false
+use_sampling: true
+filter_mode: full           # full | literal_only | numeric_only | literal_and_numeric | llm_only
+
+# ── Sampling hyperparameters ─────────────────────────────────────────────────
+beta: 0.5                   # tail-distribution smoothing (0=uniform, 1=proportional)
+degree_alpha: 0.5           # inverse-degree weighting strength
+min_per_label: 4            # minimum examples per tail-entity class
+max_label_ratio: 100        # soft upper cap multiplier on per-label sample counts
+
+# ── Literal detection thresholds ─────────────────────────────────────────────
+literal_threshold: 0.9      # uniqueness ratio above which a predicate is deemed literal
+numeric_threshold: 0.9      # numeric prevalence above which a predicate is flagged
+
+# ── I/O paths (override per dataset) ─────────────────────────────────────────
+path_train: /shared_mnt/ULTRA/grail_s/yago3/versions/train_FG_YAGO3.txt
+path_test: /shared_mnt/ULTRA/grail_s/yago3/versions/test_playsFor.txt
+path_llm_preds: /shared_mnt/ULTRA/grail_s/yago3/versions/llm_preds_playsFor.txt
+train_replace_keyword: FG
+custom_output_postfix: null
