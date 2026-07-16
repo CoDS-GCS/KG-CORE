@@ -26,7 +26,7 @@ KG-CORE/
 └── kg_core/
     ├── __init__.py
     ├── args.py                # CLI flags + output path builder
-    ├── pipeline.py            # Orchestrator (wires C1–C6)
+    ├── pipeline.py            # Orchestrator (wires filtering–construction)
     ├── profiling/
     │   └── profiler.py        #  · KG Profiler
     ├── filtering/
