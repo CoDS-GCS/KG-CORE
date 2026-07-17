@@ -1,7 +1,10 @@
 # KG-CORE
-
+<p align="center">
+  <img src="Figures/architecture.png" alt="Figure Description" width="500">
+</p>
 **Knowledge Graph Context and Representative-Example Subgraph Sampler**
-
+\
+Knowledge graph foundation models (KGFMs) eliminate training a new model for every KG and task. A pretrained KGFM answers link prediction queries over an unseen KG, provided to the model as an inference graph. The KGFM reasons over the transferable relational patterns in this graph, known as motifs. The inference graph is the model's only source of the KG structure and semantics, and its quality determines both prediction accuracy and inference cost. Real KGs contain many irrelevant predicates and non-motif structures, which dilute the task-relevant motifs and mislead the KGFM. Standard KGFM inference loads the entire KG into memory, so it fails with out-of-memory errors on large KGs and incurs high latency. Topology-based sampling is semantically blind, so its reduced graphs retain this noise. Sampling methods designed for training approximate gradients provide no representative examples for zero-shot inference. We propose KG-CORE, a modular framework that constructs a compact motif-centric inference subgraph per query. KG-CORE filters non-motif and irrelevant predicates using statistical profiling and LLM-guided selection. It then combines representative in-context examples with bounded multi-hop expansion around the query entities. We evaluate KG-CORE on three real KGs of up to 118M triples, one to two orders of magnitude larger than existing KGFM benchmarks. KG-CORE matches or exceeds full-KG Hits@10 across three state-of-the-art KGFMs: ULTRA, MOTIF, and FLOCK. It reduces memory by up to 97% and inference time by up to 50X. It enables inference where full-KG inference fails. KG-CORE is model-agnostic, uses one fixed configuration across all KGs and tasks, and requires no retraining.
 A direction-aware, LLM-guided pipeline for task-specific subgraph extraction, targeting tail prediction (h, r, ?) in Graph Foundation Models (GFMs).
 
 ---
@@ -10,9 +13,9 @@ A direction-aware, LLM-guided pipeline for task-specific subgraph extraction, ta
 
 Rather than feeding a full knowledge graph to a GFM, KG-CORE extracts a compact, semantically focused subgraph that combines:
 
-- **Representative in-context examples** — stratified, degree-aware samples for each inference predicate.
-- **Structural neighborhood** — directional multi-hop BFS from query entities.
-- **Oracle-guided predicate filtering** — LLM-selected predicates restrict the search space to relations relevant to the inference task.
+- **Representative in-context examples**: stratified, degree-aware samples for each inference predicate.
+- **Structural neighborhood**: directional multi-hop BFS from query entities.
+- **Oracle-guided predicate filtering**: LLM-selected predicates restrict the search space to relations relevant to the inference task.
 
 ---
 
@@ -43,36 +46,10 @@ KG-CORE/
 
 ---
 
-## Pipeline
 
-```
-Full KG + Test Queries
-        │
-        ▼
-    KG Profiler          — predicate stats, degree, literal scores
-        │
-        ▼
-    Non-Motif Filter     — remove literal & numeric predicates
-        │
-        ▼
-    LLM Oracle  ◄──────── Task predicate + KG stats
-        │
-       ┌┴──────────────────┐
-       ▼                   ▼
-    Stratified          Context
-      Sampler           Expander
-       └──────────┬────────┘
-                  ▼
-              Assembler  — merge, deduplicate, remove test leakage
-                  │
-                  ▼
-          Subgraph → GFM → Predictions
-```
 
----
 
 ## Installation
-
 ```bash
 pip install pandas tqdm
 # For live LLM oracle:
